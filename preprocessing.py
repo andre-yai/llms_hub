@@ -35,13 +35,13 @@ def get_image_base64(image_path: str) -> str:
     except Exception as e:
         raise PreprocessingError(f"Error processing image {image_path}: {str(e)}")
 
-def create_messages(user_prompts: List[Dict[str, str]], system_prompt: str = "") -> List[Dict[str, Any]]:
+def create_messages(user_prompts, system_prompt: str = "") -> List[Dict[str, Any]]:
     """
     Create a list of messages for the LLM API call, including system and user messages.
 
     Args:
-        user_prompts (List[Dict[str, str]]): A list of dictionaries containing user prompts.
-            Each dictionary should have either a 'text' or 'image' key.
+        user_prompts (Union[str, List[Dict[str, str]]]): Either a single string prompt or a list of dictionaries containing user prompts.
+            If a list, each dictionary should have either a 'text' or 'image' key.
         system_prompt (str, optional): The system prompt to guide the model's behavior.
             Defaults to an empty string.
 
@@ -59,20 +59,20 @@ def create_messages(user_prompts: List[Dict[str, str]], system_prompt: str = "")
         system_message = {"role": "system", "content": [{"type": TEXT_TYPE, "text": system_prompt}]}
         user_messages = {"role": "user", "content": []}
         
-        for prompt in user_prompts:
-            if not isinstance(prompt, dict) or len(prompt) != 1:
-                raise ValueError(f"Invalid prompt format: {prompt}")
-            
-            option, value = next(iter(prompt.items()))
-            if option == TEXT_TYPE:
-                user_messages["content"].append({"type": TEXT_TYPE, "text": value})
-            elif option == IMAGE_TYPE:
-                user_messages["content"].append({
-                    "type": IMAGE_URL_TYPE,
-                    IMAGE_URL_TYPE: {"url": get_image_base64(value)}
-                })
-            else:
-                raise ValueError(f"Unsupported prompt type: {option}")
+        if isinstance(user_prompts, str):
+            user_messages["content"].append({"type": TEXT_TYPE, "text": user_prompts})
+        elif isinstance(user_prompts, list):
+            for prompts in user_prompts:
+                option, value = next(iter(prompts.items()))
+                if option == TEXT_TYPE:
+                    user_messages["content"].append({"type": TEXT_TYPE, "text": value})
+                elif option == IMAGE_TYPE:
+                    user_messages["content"].append({
+                        "type": IMAGE_URL_TYPE,
+                        IMAGE_URL_TYPE: {"url": get_image_base64(value)}
+                    })
+                else:
+                    raise ValueError(f"Unsupported prompt type: {option}")
 
         return [system_message, user_messages]
     except Exception as e:

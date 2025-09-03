@@ -67,7 +67,9 @@ class LLM_API:
 
     def _openai_call(self, user_prompt: List[Dict[str, str]], system_prompt: str, model_name: str) -> Tuple[str, Dict[str, Any]]:
         """Make an API call to OpenAI."""
+        print("OpenAI call")
         messages = create_messages(user_prompt, system_prompt)
+        print(user_prompt, system_prompt, model_name)
         response = self.client.chat.completions.create(
             model=model_name,
             messages=messages

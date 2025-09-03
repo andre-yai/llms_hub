@@ -2,3 +2,5 @@ pyyaml
 awscli
 openai
 boto3
+streamlit
+pandas
