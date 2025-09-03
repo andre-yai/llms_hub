@@ -43,12 +43,10 @@ To set up S3 storage:
 2. In your `config.yml` file, add the following S3 configuration:
 
    ```yaml
-   s3_config:
      bucket_name: your-bucket-name
-     region_name: your-aws-region
    ```
 
-3. Replace `your-bucket-name` with the name of your S3 bucket and `your-aws-region` with the appropriate AWS region.
+3. Replace `your-bucket-name` with the name of your S3 bucket.
 
 Each conversation will be saved as a separate JSON file in your specified S3 bucket, with a timestamp as the filename. You can access these files using the AWS Management Console or AWS CLI.
 

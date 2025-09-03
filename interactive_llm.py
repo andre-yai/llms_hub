@@ -51,7 +51,7 @@ def load_config(file_path: str) -> Dict[str, Any]:
         print(f"Config file not found: {file_path}")
         raise
 
-def save_conversation_to_s3(model_name: str, system_prompt: str, conversation: list, bucket: str = None):
+def save_conversation_to_s3(model_name: str, system_prompt: str, conversation: list, bucket_name: str = None):
     """
     Save the conversation to an S3 bucket.
 
@@ -67,7 +67,6 @@ def save_conversation_to_s3(model_name: str, system_prompt: str, conversation: l
     # Implement actual S3 saving logic here
     # For example, using boto3 to upload the conversation to a specified S3 bucket
     s3 = boto3.client('s3')
-    bucket_name = bucket
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     key = f"conversations/{model_name}_conversation_{timestamp}.json"
 
@@ -124,7 +123,7 @@ def main():
             if user_input.lower() == EXIT_COMMAND:
                 save_choice = input("Do you want to save the conversation for later reference? (yes/no): ").strip().lower()
                 if save_choice == "yes":
-                    save_conversation_to_s3(model_name, system_prompt, conversation, config["bucket"])
+                    save_conversation_to_s3(model_name, system_prompt, conversation, config["bucket_name"])
                 save_conversation_to_s3(model_name, system_prompt, conversation)
                 break
 
